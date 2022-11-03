@@ -1,5 +1,5 @@
-from IPython.kernel.zmq.kernelbase import Kernel
-from IPython.utils.path import locate_profile
+from ipykernel.kernelbase import Kernel
+from IPython.paths import locate_profile
 from IPython.core.displaypub import publish_display_data
 from pexpect import replwrap,EOF,spawn
 
@@ -35,7 +35,7 @@ class IDLKernel(Kernel):
         if self._banner is None:
             try:
                 if os.path.basename(self._executable) == 'idl':
-                    self._banner = check_output([self._executable, '-e','"print,string(0B)"']).decode('utf-8')
+                    self._banner = check_output([self._executable, '-e','print,string(0B)']).decode('utf-8')
                 else:
                     self._banner = check_output([self._executable, '--version']).decode('utf-8')
             except:
@@ -69,11 +69,12 @@ class IDLKernel(Kernel):
         sig = signal.signal(signal.SIGINT, signal.SIG_DFL)
         try:
             self._executable = find_executable("idl")
-            self._child  = spawn(self._executable,timeout = 300)
+            # self._child  = spawn(self._executable,timeout = 300)
+            self._child  = spawn(self._executable,timeout = 300, encoding='utf-8')
             self.idlwrapper = replwrap.REPLWrapper(self._child,u"IDL> ",None)
         except:
             self._executable = find_executable("gdl")
-            self._child  = spawn(self._executable,timeout = 300)
+            self._child  = spawn(self._executable,timeout = 300, encoding='utf-8')
             self.idlwrapper = replwrap.REPLWrapper(self._child,u"GDL> ",None)
         finally:
             signal.signal(signal.SIGINT, sig)
@@ -219,5 +220,5 @@ class IDLKernel(Kernel):
         return {'status':'ok', 'restart':restart}
 
 if __name__ == '__main__':
-    from IPython.kernel.zmq.kernelapp import IPKernelApp
+    from ipykernel.kernelapp import IPKernelApp
     IPKernelApp.launch_instance(kernel_class=IDLKernel)

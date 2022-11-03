@@ -13,7 +13,8 @@ class install_with_kernelspec(install):
     def run(self):
         install.run(self)
 
-        from IPython.kernel.kernelspec import KernelSpecManager
+        from ipykernel.kernelbase import Kernel
+        from ipykernel.kernelspec import KernelSpecManager
         from IPython.utils.path import ensure_dir_exists
         destdir = os.path.join(KernelSpecManager().user_kernel_dir,'IDL')
         ensure_dir_exists(destdir)
